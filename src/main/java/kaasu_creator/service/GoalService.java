@@ -37,11 +37,9 @@ public class GoalService {
      */
     public Goal createGoal(Long userId, String name, BigDecimal targetAmount, LocalDate deadline) {
         Goal goal = new Goal(null, userId, name, targetAmount, BigDecimal.ZERO, deadline, null);
-        goalDao.save(goal);
-
-        // Generate the roadmap for this goal
+        Long id = goalDao.save(goal);
+        goal = new Goal(id, userId, name, targetAmount, BigDecimal.ZERO, deadline, null);
         generateRoadmap(goal);
-
         return goal;
     }
 

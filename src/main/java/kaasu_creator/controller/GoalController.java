@@ -48,6 +48,10 @@ public class GoalController {
                              RedirectAttributes redirectAttributes) {
         Long userId = getUserId(authentication);
         LocalDate deadlineDate = LocalDate.parse(deadline);
+        if (!deadlineDate.isAfter(LocalDate.now())) {
+            redirectAttributes.addFlashAttribute("error", "Deadline must be a future date.");
+            return "redirect:/goal";
+        }
         Goal goal = goalService.createGoal(userId, name, targetAmount, deadlineDate);
         redirectAttributes.addFlashAttribute("success",
             "Goal created! " + goal.getName() + " - roadmap generated.");
@@ -55,17 +59,29 @@ public class GoalController {
     }
 
     @PostMapping("/goal/add-savings")
-    public String addSavings(@RequestParam Long goalId,
+    public String addSavings(Authentication authentication,
+                             @RequestParam Long goalId,
                              @RequestParam BigDecimal amount,
                              RedirectAttributes redirectAttributes) {
+        Long userId = getUserId(authentication);
+        Goal goal = goalService.getGoalById(goalId);
+        if (goal == null || !goal.getUserId().equals(userId)) {
+            redirectAttributes.addFlashAttribute("error", "Goal not found.");
+            return "redirect:/goal";
+        }
         goalService.addSavings(goalId, amount);
         redirectAttributes.addFlashAttribute("success", "Savings added to goal!");
         return "redirect:/goal";
     }
 
     @GetMapping("/goal/view")
-    public String viewGoal(@RequestParam Long goalId, Model model) {
+    public String viewGoal(Authentication authentication,
+                           @RequestParam Long goalId, Model model) {
+        Long userId = getUserId(authentication);
         Goal goal = goalService.getGoalById(goalId);
+        if (goal == null || !goal.getUserId().equals(userId)) {
+            return "redirect:/goal";
+        }
         model.addAttribute("goal", goal);
         model.addAttribute("roadmap", goalService.getRoadmap(goalId));
         model.addAttribute("progress", goalService.getProgress(goalId));

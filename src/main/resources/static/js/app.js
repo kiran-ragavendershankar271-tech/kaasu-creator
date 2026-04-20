@@ -141,8 +141,17 @@ function confirmDelete(expenseId) {
         input.type = 'hidden';
         input.name = 'expenseId';
         input.value = expenseId;
-
         form.appendChild(input);
+
+        const csrfMeta = document.querySelector('meta[name="_csrf"]');
+        if (csrfMeta) {
+            const csrf = document.createElement('input');
+            csrf.type = 'hidden';
+            csrf.name = '_csrf';
+            csrf.value = csrfMeta.content;
+            form.appendChild(csrf);
+        }
+
         document.body.appendChild(form);
         form.submit();
     }

@@ -48,9 +48,9 @@ public class BudgetService {
     }
 
     /**
-     * Delete an expense by ID.
+     * Delete an expense, verifying it belongs to the requesting user.
      */
-    public void deleteExpense(Long expenseId) {
-        expenseDao.deleteById(expenseId);
+    public void deleteExpense(Long expenseId, Long userId) {
+        expenseDao.deleteByIdAndUserId(expenseId, userId);
     }
 }

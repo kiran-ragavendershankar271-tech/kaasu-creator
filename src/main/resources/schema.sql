@@ -65,3 +65,11 @@ CREATE TABLE IF NOT EXISTS roadmaps (
     target_amount DECIMAL(10,2) NOT NULL,
     status        VARCHAR(50)   DEFAULT 'pending'
 );
+
+CREATE INDEX IF NOT EXISTS idx_expenses_user_id        ON expenses(user_id);
+CREATE INDEX IF NOT EXISTS idx_goals_user_id           ON goals(user_id);
+CREATE INDEX IF NOT EXISTS idx_incomes_user_id         ON incomes(user_id);
+CREATE INDEX IF NOT EXISTS idx_jobs_user_id            ON jobs(user_id);
+CREATE INDEX IF NOT EXISTS idx_timesheet_user_id       ON timesheet_entries(user_id);
+CREATE INDEX IF NOT EXISTS idx_timesheet_job_id        ON timesheet_entries(job_id);
+CREATE INDEX IF NOT EXISTS idx_roadmaps_goal_id        ON roadmaps(goal_id);

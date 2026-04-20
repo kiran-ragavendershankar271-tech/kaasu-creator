@@ -57,8 +57,8 @@ public class SecurityConfig {
                 .logoutSuccessUrl("/login?logout")
                 .permitAll()
             )
-            // Disable CSRF for development (in production, use proper CSRF tokens)
-            .csrf(csrf -> csrf.disable());
+            // CSRF enabled — Thymeleaf th:action forms auto-include the token
+            ;
 
         return http.build();
     }

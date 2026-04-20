@@ -52,8 +52,11 @@ public class BudgetController {
     }
 
     @PostMapping("/budget/delete")
-    public String deleteExpense(@RequestParam Long expenseId, RedirectAttributes redirectAttributes) {
-        budgetService.deleteExpense(expenseId);
+    public String deleteExpense(Authentication authentication,
+                                @RequestParam Long expenseId,
+                                RedirectAttributes redirectAttributes) {
+        Long userId = getUserId(authentication);
+        budgetService.deleteExpense(expenseId, userId);
         redirectAttributes.addFlashAttribute("success", "Expense deleted.");
         return "redirect:/budget";
     }

@@ -47,9 +47,9 @@ public class ExpenseDao {
         return jdbc.queryForObject(sql, BigDecimal.class, userId);
     }
 
-    // DELETE an expense by ID
-    public void deleteById(Long id) {
-        String sql = "DELETE FROM expenses WHERE id = ?";
-        jdbc.update(sql, id);
+    // DELETE an expense only if it belongs to the given user (prevents unauthorized deletion)
+    public void deleteByIdAndUserId(Long id, Long userId) {
+        String sql = "DELETE FROM expenses WHERE id = ? AND user_id = ?";
+        jdbc.update(sql, id, userId);
     }
 }

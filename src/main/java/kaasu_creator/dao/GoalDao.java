@@ -1,9 +1,13 @@
 package kaasu_creator.dao;
 
+import java.sql.PreparedStatement;
+import java.sql.Statement;
 import java.util.List;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import kaasu_creator.model.Goal;
@@ -28,10 +32,20 @@ public class GoalDao {
         rs.getTimestamp("created_at")
     );
 
-    // INSERT a new goal
-    public void save(Goal goal) {
+    // INSERT a new goal and return the generated ID
+    public Long save(Goal goal) {
         String sql = "INSERT INTO goals (user_id, name, target_amount, current_amount, deadline) VALUES (?, ?, ?, ?, ?)";
-        jdbc.update(sql, goal.getUserId(), goal.getName(), goal.getTargetAmount(), goal.getCurrentAmount(), goal.getDeadline());
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbc.update(con -> {
+            PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            ps.setLong(1, goal.getUserId());
+            ps.setString(2, goal.getName());
+            ps.setBigDecimal(3, goal.getTargetAmount());
+            ps.setBigDecimal(4, goal.getCurrentAmount());
+            ps.setObject(5, goal.getDeadline());
+            return ps;
+        }, keyHolder);
+        return keyHolder.getKey().longValue();
     }
 
     // FIND all goals for a specific user
